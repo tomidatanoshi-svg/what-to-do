@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>これから、なにする？</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ffe0e9,
+          #e8e7ff
+        );
+
+      min-height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 20px;
+    }
+
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+
+      background: white;
+
+      border-radius: 24px;
+
+      padding: 25px 20px 20px;
+
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.12);
+
+      text-align: center;
+    }
+
+
+    h1 {
+      margin: 0 0 20px;
+
+      font-size: 32px;
+
+      font-weight: 800;
+    }
+
+
+    .dice {
+      font-size: 70px;
+
+      margin: 10px 0 20px;
+
+      display: inline-block;
+    }
+
+
+    /* =========================
+       サイコロ回転
+    ========================= */
+
+    .dice.roll {
+      animation:
+        rollDice
+        1s
+        ease-in-out;
+    }
+
+
+    @keyframes rollDice {
+
+      0% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(180deg);
+      }
+
+      50% {
+        transform: rotate(360deg);
+      }
+
+      75% {
+        transform: rotate(540deg);
+      }
+
+      100% {
+        transform: rotate(720deg);
+      }
+
+    }
+
+
+    /* =========================
+       サイコロ停止時
+    ========================= */
+
+    .dice.bounce {
+      animation:
+        bounceDice
+        0.3s
+        ease-out;
+    }
+
+
+    @keyframes bounceDice {
+
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.25);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+
+    }
+
+
+    /* =========================
+       見出し
+    ========================= */
+
+    .section-title {
+
+      font-size: 15px;
+
+      font-weight: bold;
+
+      margin:
+        15px 0
+        8px;
+
+    }
+
+
+    /* =========================
+       カテゴリー
+    ========================= */
+
+    .categories {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 8px;
+
+      margin-bottom: 15px;
+
+    }
+
+
+    .category {
+
+      border: none;
+
+      border-radius: 12px;
+
+      padding: 10px 4px;
+
+      background: #f1f1f1;
+
+      font-size: 12px;
+
+      cursor: pointer;
+
+    }
+
+
+    .category.selected {
+
+      background: #222;
+
+      color: white;
+
+      font-weight: bold;
+
+    }
+
+
+    /* 完全ランダム */
+
+    .category.random-category {
+
+      grid-column:
+        1 / -1;
+
+      font-size: 14px;
+
+      padding: 12px;
+
+      background: #f5f5f5;
+
+    }
+
+
+    .category.random-category.selected {
+
+      background: #222;
+
+      color: white;
+
+    }
+
+
+    /* =========================
+       人数
+    ========================= */
+
+    .people-buttons {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 8px;
+
+      margin-bottom: 15px;
+
+    }
+
+
+    .people-button {
+
+      border: none;
+
+      border-radius: 12px;
+
+      padding: 10px 4px;
+
+      background: #f1f1f1;
+
+      font-size: 12px;
+
+      cursor: pointer;
+
+    }
+
+
+    .people-button.selected {
+
+      background: #222;
+
+      color: white;
+
+      font-weight: bold;
+
+    }
+
+
+    /* =========================
+       ミッション
+    ========================= */
+
+    .mission-buttons {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 8px;
+
+      margin-bottom: 20px;
+
+    }
+
+
+    .mission-button {
+
+      border: none;
+
+      border-radius: 12px;
+
+      padding: 10px;
+
+      background: #f1f1f1;
+
+      font-size: 13px;
+
+      cursor: pointer;
+
+    }
+
+
+    .mission-button.selected {
+
+      background: #222;
+
+      color: white;
+
+      font-weight: bold;
+
+    }
+
+
+    /* =========================
+       メインボタン
+    ========================= */
+
+    #actionButton {
+
+      width: 100%;
+
+      border: none;
+
+      border-radius: 16px;
+
+      background: #111;
+
+      color: white;
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      padding: 16px;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.1s,
+        opacity 0.2s;
+
+    }
+
+
+    #actionButton:active {
+
+      transform: scale(0.97);
+
+    }
+
+
+    #actionButton:disabled {
+
+      opacity: 0.5;
+
+      cursor: default;
+
+    }
+
+
+    /* =========================
+       結果
+    ========================= */
+
+    #result {
+
+      margin-top: 20px;
+
+      min-height: 130px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+    }
+
+
+    .message {
+
+      color: #888;
+
+      font-size: 14px;
+
+    }
+
+
+    .result-title {
+
+      font-size: 14px;
+
+      color: #777;
+
+      margin-bottom: 8px;
+
+      font-weight: bold;
+
+    }
+
+
+    .result-action {
+
+      font-size: 22px;
+
+      font-weight: 800;
+
+      line-height: 1.5;
+
+      padding: 0 5px;
+
+    }
+
+
+    /* =========================
+       完全ランダム表示
+    ========================= */
+
+    .random-label {
+
+      font-size: 13px;
+
+      color: #777;
+
+      margin-bottom: 5px;
+
+    }
+
+
+    /* =========================
+       追加ミッション
+    ========================= */
+
+    .mission {
+
+      margin-top: 18px;
+
+      padding: 14px;
+
+      border-radius: 14px;
+
+      background: #fff3cd;
+
+    }
+
+
+    .mission-title {
+
+      font-size: 13px;
+
+      font-weight: bold;
+
+      margin-bottom: 5px;
+
+    }
+
+
+    .mission-text {
+
+      font-size: 15px;
+
+      font-weight: bold;
+
+      line-height: 1.5;
+
+    }
+
+
+    /* =========================
+       フッター
+    ========================= */
+
+    footer {
+
+      margin-top: 20px;
+
+      font-size: 12px;
+
+      color: #aaa;
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <div class="app">
+
+
+    <h1>
+      これから、なにする？
+    </h1>
+
+
+    <div
+      id="dice"
+      class="dice"
+    >
+      🎲
+    </div>
+
+
+    <!-- =========================
+         カテゴリー
+    ========================= -->
+
+    <div class="section-title">
+      どんなことする？
+    </div>
+
+
+    <div class="categories">
+
+
+      <button
+        class="category selected"
+        onclick="selectCategory('normal', this)"
+      >
+        😊 普通
+      </button>
+
+
+      <button
+        class="category"
+        onclick="selectCategory('funny', this)"
+      >
+        😂 面白い
+      </button>
+
+
+      <button
+        class="category"
+        onclick="selectCategory('crazy', this)"
+      >
+        🔥 無茶ぶり
+      </button>
+
+
+      <button
+        class="category"
+        onclick="selectCategory('daily', this)"
+      >
+        ☀️ 日常系
+      </button>
+
+
+      <button
+        class="category"
+        onclick="selectCategory('adventure', this)"
+      >
+        🗺️ 冒険系
+      </button>
+
+
+      <button
+        class="category"
+        onclick="selectCategory('wild', this)"
+      >
+        🤪 ちょっと無茶系
+      </button>
+
+
+      <button
+        class="category"
+        onclick="selectCategory('memory', this)"
+      >
+        💭 思い出系
+      </button>
+
+
+      <!-- 8個目 -->
+
+      <button
+        class="category random-category"
+        onclick="selectCategory('random', this)"
+      >
+        🎲 完全ランダム
+      </button>
+
+
+    </div>
+
+
+    <!-- =========================
+         人数
+    ========================= -->
+
+    <div class="section-title">
+      何人で？
+    </div>
+
+
+    <div class="people-buttons">
+
+
+      <button
+        class="people-button selected"
+        onclick="selectPeople('two', this)"
+      >
+        👤 2人
+      </button>
+
+
+      <button
+        class="people-button"
+        onclick="selectPeople('group', this)"
+      >
+        👥 3〜4人
+      </button>
+
+
+      <button
+        class="people-button"
+        onclick="selectPeople('many', this)"
+      >
+        👨‍👩‍👧‍👦 5人以上
+      </button>
+
+
+    </div>
+
+
+    <!-- =========================
+         ミッション
+    ========================= -->
+
+    <div class="section-title">
+      追加ミッション
+    </div>
+
+
+    <div class="mission-buttons">
+
+
+      <button
+        class="mission-button selected"
+        onclick="selectMission(true, this)"
+      >
+        あり
+      </button>
+
+
+      <button
+        class="mission-button"
+        onclick="selectMission(false, this)"
+      >
+        なし
+      </button>
+
+
+    </div>
+
+
+    <!-- =========================
+         抽選ボタン
+    ========================= -->
+
+    <button
+      id="actionButton"
+      onclick="randomAction()"
+    >
+      なにする？
+    </button>
+
+
+    <!-- =========================
+         結果
+    ========================= -->
+
+    <div id="result">
+
+      <span class="message">
+        ボタンを押してみて
+      </span>
+
+    </div>
+
+
+    <footer>
+      今日は何が起こるかな。
+    </footer>
+
+
+  </div>
+
+
+
+<script>
+
+
+/* ==================================================
+   設定
+================================================== */
+
+
+let currentCategory = "normal";
+
+let currentPeople = "two";
+
+let missionEnabled = true;
+
+
+/*
+  直近5回のお題を記録
+*/
+
+let recentActions = [];
+
+
+
+/* ==================================================
+   お題
+================================================== */
+
+
+const actions = {
+
+
+  /* =========================
+     普通
+  ========================= */
+
+  normal: [
+
+    "今まで行ったことのないカフェに行く",
+
+    "知らない道を30分散歩する",
+
+    "コンビニでお互いに500円以内で好きなものを買って交換する",
+
+    "次に来た電車に乗って、降りた駅を探索する",
+
+    "夜に少しだけドライブする",
+
+    "お互いに相手の好きそうなものを1つ選んでプレゼントする",
+
+    "じゃんけんで負けた方が今日の夕飯を決める",
+
+    "お互いのスマホにある写真を見せ合う",
+
+    "気になっていたお店に入ってみる",
+
+    "近くの公園でゆっくり話す",
+
+    "普段とは違う道を歩いて帰る",
+
+    "お互いにおすすめの曲を1曲ずつ聴く",
+
+    "コンビニで新商品を1つ買ってみる",
+
+    "一番近いカフェを探して入る",
+
+    "今日食べたいものをお互いに1つずつ出して決める",
+
+    "夕焼けが見える場所を探す",
+
+    "スーパーで好きなお菓子を1つ選ぶ",
+
+    "写真を撮りながら30分散歩する",
+
+    "気になっていた場所をGoogleマップで探してみる",
+
+    "何も決めずに1時間一緒に過ごす"
+
+  ],
+
+
+  /* =========================
+     面白い
+  ========================= */
+
+  funny: [
+
+    "コンビニで一番気になる商品を1つずつ選んで買う",
+
+    "相手が似合いそうな服を1着選んであげる",
+
+    "1000円以内で「一番いらないもの」を探す",
+
+    "お互いに変なポーズで写真を撮る",
+
+    "相手が好きそうなお菓子を本気で選んでプレゼントする",
+
+    "次に見つけた看板の文字だけで今日の夕飯を決める",
+
+    "お互いのスマホの写真から一番面白い写真を選ぶ",
+
+    "じゃんけん5回勝負して、負けた方がアイスを買う",
+
+    "相手が選んだ店には文句を言わずに入る",
+
+    "お互いに相手の好きそうなものを500円以内で選ぶ",
+
+    "お互いに似合わなそうな服を選ぶ",
+
+    "500円以内で一番変なものを探す",
+
+    "お互いの第一印象を発表する",
+
+    "相手の好きそうなものを予想して買う",
+
+    "変なポーズで自撮りする",
+
+    "一番くだらない写真を撮る",
+
+    "相手の口癖を1つマネする",
+
+    "今日一番笑った瞬間を競う",
+
+    "相手の好きな食べ物を勝手に予想する",
+
+    "お互いに変なあだ名をつける"
+
+  ],
+
+
+  /* =========================
+     無茶ぶり
+  ========================= */
+
+  crazy: [
+
+    "次に見つけた店に何も考えず入る",
+
+    "知らない駅で降りて1時間探索する",
+
+    "最初に見つけた食べ物を必ず食べる",
+
+    "1000円だけ持って相手へのプレゼントを探す",
+
+    "お互いに相手の今日の服を1つ選ぶ",
+
+    "Googleマップで目を閉じて指した場所に行く",
+
+    "最初に見つけた自動販売機で飲み物を買う",
+
+    "じゃんけんで負けた方が今日の行き先を決める",
+
+    "お互いに「絶対自分では選ばないもの」を1つ選ぶ",
+
+    "今いる場所から適当に歩いて30分後の場所で記念写真を撮る",
+
+    "次に見つけた飲食店に入る",
+
+    "サイコロで次の行動を決める",
+
+    "目を閉じて選んだお菓子を買う",
+
+    "30分だけ予定を全部捨てて行動する",
+
+    "次に来た電車に乗ってみる",
+
+    "知らない商店街を探索する",
+
+    "一番気になった店に入ってみる",
+
+    "今日の夕飯をじゃんけんだけで決める",
+
+    "お互いに絶対選ばないものを買う",
+
+    "その場で次の目的地を決める"
+
+  ],
+
+
+  /* =========================
+     日常系
+  ========================= */
+
+  daily: [
+
+    "ちょっと遠くの駅まで歩く",
+
+    "コンビニで全員500円ずつ使う",
+
+    "知らない店に入ってみる",
+
+    "朝まで語り合う",
+
+    "全員でプリクラを撮る",
+
+    "スーパーで好きなお菓子を1つ買う",
+
+    "一緒に朝ごはんを食べる",
+
+    "近所を30分散歩する",
+
+    "いつもと違う道で帰る",
+
+    "コンビニの新商品を試す",
+
+    "近くの公園で話す",
+
+    "一緒に飲み物を買う",
+
+    "夕飯をその場で決める",
+
+    "気になるカフェを探す",
+
+    "スーパーで1000円以内のものを探す",
+
+    "普段行かないコンビニに行く",
+
+    "一緒に写真を撮る",
+
+    "近くの商店街を歩く",
+
+    "今日一番気になった店を探す",
+
+    "何も決めずに散歩する"
+
+  ],
+
+
+  /* =========================
+     冒険系
+  ========================= */
+
+  adventure: [
+
+    "行ったことのない街へ行く",
+
+    "サイコロで行き先を決める",
+
+    "終電を気にせず遊ぶ",
+
+    "その場で次の目的地を決める",
+
+    "予定を全部捨てて遊ぶ",
+
+    "知らない駅で降りる",
+
+    "行ったことのない商店街へ行く",
+
+    "地図を見ずに10分歩く",
+
+    "一番近い観光スポットを探す",
+
+    "知らない道を探索する",
+
+    "電車で3駅先まで行ってみる",
+
+    "駅前で一番気になる方向へ歩く",
+
+    "Googleマップで気になる場所を探す",
+
+    "今いる場所から一番遠そうな場所を探す",
+
+    "知らない公園を探す",
+
+    "行ったことのないカフェを探す",
+
+    "次に来た電車に乗る",
+
+    "知らない商店街で食べ歩きする",
+
+    "地図だけ見て目的地を決める",
+
+    "今日は行き先をその場で決め続ける"
+
+  ],
+
+
+  /* =========================
+     ちょっと無茶系
+  ========================= */
+
+  wild: [
+
+    "深夜にラーメンを食べに行く",
+
+    "全員でお揃いのものを買う",
+
+    "予算1,000円で最高のものを探す",
+
+    "一番くだらないことを本気でやる",
+
+    "明日の予定を考えず遊ぶ",
+
+    "普段なら絶対買わないものを1つ買う",
+
+    "一番変な商品を探す",
+
+    "お互いに服を選ぶ",
+
+    "今日一番くだらない写真を撮る",
+
+    "1000円だけで楽しむ",
+
+    "全員で同じものを注文する",
+
+    "一番高そうに見えるものを1000円以内で探す",
+
+    "知らない店でおすすめを聞く",
+
+    "全員で同じポーズの写真を撮る",
+
+    "一番笑える場所を探す",
+
+    "普段行かない場所で夕飯を食べる",
+
+    "全員で変な飲み物を選ぶ",
+
+    "一番面白いお土産を探す",
+
+    "今日しかできないことを1つやる",
+
+    "全員でくだらないランキングを作る"
+
+  ],
+
+
+  /* =========================
+     思い出系
+  ========================= */
+
+  memory: [
+
+    "昔の写真を見せ合う",
+
+    "「初めて会ったとき」の話をする",
+
+    "一番楽しかった思い出を話す",
+
+    "みんなで写真を撮る",
+
+    "10年後にやりたいことを話す",
+
+    "一番笑った思い出を話す",
+
+    "昔ハマっていたものを話す",
+
+    "子どもの頃の夢を話す",
+
+    "初めて行った旅行の話をする",
+
+    "今までで一番嬉しかったことを話す",
+
+    "忘れられない一日の話をする",
+
+    "昔の写真を1枚選んで見せる",
+
+    "一番好きな思い出の場所を話す",
+
+    "また行きたい場所を話す",
+
+    "これから一緒にやりたいことを話す",
+
+    "10年前の自分に一言伝える",
+
+    "一番印象に残っている出来事を話す",
+
+    "今までで一番楽しかった旅行を話す",
+
+    "昔の失敗談を1つ話す",
+
+    "今日の思い出を写真に残す"
+
+  ]
+
+};
+
+
+
+/* ==================================================
+   追加ミッション
+================================================== */
+
+
+const missions = {
+
+
+  normal: [
+
+    "写真を3枚撮る",
+
+    "相手のおすすめを1つ聞く",
+
+    "途中で一緒に飲み物を買う",
+
+    "今日初めて見たものを1つ見つける",
+
+    "お互いに1回ずつ相手の好きなものを選ぶ",
+
+    "最後に今日一番楽しかったことを話す",
+
+    "500円以内で小さなものを1つ買う",
+
+    "2人で記念写真を1枚撮る",
+
+    "気になったものを1つ写真に撮る",
+
+    "今日初めて行く場所を1つ作る"
+
+  ],
+
+
+  funny: [
+
+    "相手が選んだものには文句を言わない",
+
+    "途中で変なポーズの写真を1枚撮る",
+
+    "お互いに相手の「変なところ」を1つ褒める",
+
+    "一番気になったものを写真に撮る",
+
+    "相手が笑うことを1回する",
+
+    "お互いに今日のベストショットを決める",
+
+    "途中でじゃんけんをする",
+
+    "相手の選択を1回だけ完全に信じる",
+
+    "変な写真を1枚残す",
+
+    "今日一番笑った瞬間を記録する"
+
+  ],
+
+
+  crazy: [
+
+    "最初に見つけた食べ物を必ず食べる",
+
+    "店員さんにおすすめを聞く",
+
+    "相手が決めたことには絶対に文句を言わない",
+
+    "知らない道を最低10分歩く",
+
+    "1000円以上使ってはいけない",
+
+    "途中で知らない場所を1つ開拓する",
+
+    "お互いに相手のために何か1つ選ぶ",
+
+    "今日一番恥ずかしい写真を1枚撮る",
+
+    "じゃんけんで負けた方の指示に従う",
+
+    "最後に今日の出来事を記念写真に残す"
+
+  ],
+
+
+  daily: [
+
+    "途中でコンビニに寄る",
+
+    "2人で写真を1枚撮る",
+
+    "相手の好きな飲み物を買う",
+
+    "今日初めて見るものを1つ探す",
+
+    "最後に今日一番楽しかったことを話す",
+
+    "お菓子を1つ買う",
+
+    "普段と違う道を歩く",
+
+    "一緒に飲み物を選ぶ",
+
+    "気になる店を1つ見つける",
+
+    "今日の写真を1枚残す"
+
+  ],
+
+
+  adventure: [
+
+    "最初に見つけたお店に入る",
+
+    "地図を見ずに10分歩く",
+
+    "途中で目的地を1回変更する",
+
+    "知らない場所で写真を1枚撮る",
+
+    "相手に次の行き先を任せる",
+
+    "知らない道を歩く",
+
+    "駅を1つ飛ばして降りる",
+
+    "気になる場所を1つ探す",
+
+    "今日初めて行く場所を作る",
+
+    "一番面白そうな道を選ぶ"
+
+  ],
+
+
+  wild: [
+
+    "1000円以上使わない",
+
+    "じゃんけんで負けた人が次の行動を決める",
+
+    "相手が決めたことには文句を言わない",
+
+    "普段なら選ばないものを1つ選ぶ",
+
+    "今日一番くだらない写真を撮る",
+
+    "一番変な商品を1つ見つける",
+
+    "全員で同じものを選ぶ",
+
+    "一番面白い写真を撮る",
+
+    "今日だけの思い出を1つ作る",
+
+    "全員でくだらないことを1つする"
+
+  ],
+
+
+  memory: [
+
+    "一番好きな写真を1枚見せる",
+
+    "相手との思い出を1つ話す",
+
+    "これから一緒にやりたいことを1つ話す",
+
+    "10年前の自分に一言伝える",
+
+    "最後に今日の思い出を写真に残す",
+
+    "一番笑った思い出を話す",
+
+    "昔好きだったものを話す",
+
+    "忘れられない出来事を話す",
+
+    "また行きたい場所を1つ話す",
+
+    "今日一番楽しかったことを話す"
+
+  ]
+
+};
+
+
+
+/* ==================================================
+   カテゴリー選択
+================================================== */
+
+
+function selectCategory(category, element) {
+
+  currentCategory = category;
+
+
+  /*
+    カテゴリーを変えたら
+    お題履歴をリセット
+  */
+
+  recentActions = [];
+
+
+  document
+    .querySelectorAll(".category")
+    .forEach(function(button) {
+
+      button.classList.remove("selected");
+
+    });
+
+
+  element.classList.add("selected");
+
+
+  resetResult();
+
+}
+
+
+
+/* ==================================================
+   人数選択
+================================================== */
+
+
+function selectPeople(people, element) {
+
+  currentPeople = people;
+
+
+  /*
+    人数を変えたら
+    お題履歴をリセット
+  */
+
+  recentActions = [];
+
+
+  document
+    .querySelectorAll(".people-button")
+    .forEach(function(button) {
+
+      button.classList.remove("selected");
+
+    });
+
+
+  element.classList.add("selected");
+
+
+  resetResult();
+
+}
+
+
+
+/* ==================================================
+   ミッション選択
+================================================== */
+
+
+function selectMission(enabled, element) {
+
+  missionEnabled = enabled;
+
+
+  document
+    .querySelectorAll(".mission-button")
+    .forEach(function(button) {
+
+      button.classList.remove("selected");
+
+    });
+
+
+  element.classList.add("selected");
+
+
+  resetResult();
+
+}
+
+
+
+/* ==================================================
+   結果リセット
+================================================== */
+
+
+function resetResult() {
+
+  document.getElementById("result").innerHTML =
+    '<span class="message">ボタンを押してみて</span>';
+
+}
+
+
+
+/* ==================================================
+   人数による文章調整
+================================================== */
+
+
+function adjustText(text) {
+
+  let result = text;
+
+
+  if (currentPeople === "two") {
+
+    result = result
+      .replaceAll("全員", "2人で")
+      .replaceAll("みんな", "2人で");
+
+  }
+
+
+  else {
+
+    result = result
+      .replaceAll("相手", "みんな")
+      .replaceAll("お互い", "みんなで")
+      .replaceAll("2人", "みんなで")
+      .replaceAll("全員", "みんなで");
+
+  }
+
+
+  return result;
+
+}
+
+
+
+/* ==================================================
+   完全ランダム用
+================================================== */
+
+
+function getAllActions() {
+
+  let allActions = [];
+
+
+  /*
+    7カテゴリーのお題を
+    すべて1つの配列にまとめる
+  */
+
+  Object.keys(actions).forEach(function(category) {
+
+    allActions =
+      allActions.concat(actions[category]);
+
+  });
+
+
+  return allActions;
+
+}
+
+
+
+/* ==================================================
+   完全ランダム用ミッション
+================================================== */
+
+
+function getAllMissions() {
+
+  let allMissions = [];
+
+
+  /*
+    7カテゴリーのミッションを
+    すべて1つの配列にまとめる
+  */
+
+  Object.keys(missions).forEach(function(category) {
+
+    allMissions =
+      allMissions.concat(missions[category]);
+
+  });
+
+
+  return allMissions;
+
+}
+
+
+
+/* ==================================================
+   お題抽選
+================================================== */
+
+
+function randomAction() {
+
+  const dice =
+    document.getElementById("dice");
+
+
+  const button =
+    document.getElementById("actionButton");
+
+
+  /*
+    抽選中はボタンを押せない
+  */
+
+  button.disabled = true;
+
+
+  /*
+    サイコロアニメーション
+  */
+
+  dice.classList.remove("roll");
+
+  dice.classList.remove("bounce");
+
+
+  void dice.offsetWidth;
+
+
+  dice.classList.add("roll");
+
+
+
+  /*
+    1秒後に結果表示
+  */
+
+  setTimeout(function() {
+
+
+    /* ==========================================
+       お題一覧を決定
+    ========================================== */
+
+
+    let selectedActions;
+
+
+    if (currentCategory === "random") {
+
+      /*
+        完全ランダム
+
+        7カテゴリー全部
+      */
+
+      selectedActions =
+        getAllActions();
+
+    }
+
+
+    else {
+
+      /*
+        通常カテゴリー
+
+        選択されたカテゴリーだけ
+      */
+
+      selectedActions =
+        actions[currentCategory];
+
+    }
+
+
+
+    /* ==========================================
+       過去5回のお題を除外
+    ========================================== */
+
+
+    let availableActions =
+      selectedActions.filter(function(action) {
+
+        return !recentActions.includes(action);
+
+      });
+
+
+
+    /* ==========================================
+       候補がなくなった場合
+    ========================================== */
+
+
+    while (
+      availableActions.length === 0 &&
+      recentActions.length > 0
+    ) {
+
+
+      /*
+        一番古い履歴を削除
+      */
+
+      recentActions.shift();
+
+
+      /*
+        もう一度候補を作る
+      */
+
+      availableActions =
+        selectedActions.filter(function(action) {
+
+          return !recentActions.includes(action);
+
+        });
+
+    }
+
+
+
+    /* ==========================================
+       ランダム抽選
+    ========================================== */
+
+
+    const actionIndex =
+      Math.floor(
+        Math.random() *
+        availableActions.length
+      );
+
+
+    let selectedAction =
+      availableActions[actionIndex];
+
+
+
+    /* ==========================================
+       履歴に追加
+    ========================================== */
+
+
+    recentActions.push(selectedAction);
+
+
+
+    /*
+      6個以上になったら
+      一番古いものを削除
+    */
+
+    if (recentActions.length > 5) {
+
+      recentActions.shift();
+
+    }
+
+
+
+    /* ==========================================
+       人数に合わせて文章変更
+    ========================================== */
+
+
+    selectedAction =
+      adjustText(selectedAction);
+
+
+
+    /* ==========================================
+       結果表示
+    ========================================== */
+
+
+    let resultHTML = "";
+
+
+
+    /*
+      完全ランダムなら
+      特別な表示
+    */
+
+    if (currentCategory === "random") {
+
+      resultHTML += `
+
+        <div class="random-label">
+          🎲 7カテゴリーから完全ランダム！
+        </div>
+
+      `;
+
+    }
+
+
+    resultHTML += `
+
+      <div class="result-title">
+        🎲 今日のお題
+      </div>
+
+
+      <div class="result-action">
+        ${selectedAction}
+      </div>
+
+    `;
+
+
+
+    /* ==========================================
+       追加ミッション
+    ========================================== */
+
+
+    if (missionEnabled) {
+
+
+      let selectedMissions;
+
+
+      if (currentCategory === "random") {
+
+        /*
+          完全ランダムなら
+          ミッションも全カテゴリーから抽選
+        */
+
+        selectedMissions =
+          getAllMissions();
+
+      }
+
+
+      else {
+
+        /*
+          通常カテゴリーなら
+          そのカテゴリーのミッション
+        */
+
+        selectedMissions =
+          missions[currentCategory];
+
+      }
+
+
+
+      const missionIndex =
+        Math.floor(
+          Math.random() *
+          selectedMissions.length
+        );
+
+
+      let selectedMission =
+        selectedMissions[missionIndex];
+
+
+      selectedMission =
+        adjustText(selectedMission);
+
+
+
+      resultHTML += `
+
+        <div class="mission">
+
+          <div class="mission-title">
+            🎯 追加ミッション
+          </div>
+
+
+          <div class="mission-text">
+            ${selectedMission}
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    /* ==========================================
+       画面に結果表示
+    ========================================== */
+
+
+    document.getElementById("result").innerHTML =
+      resultHTML;
+
+
+
+    /* ==========================================
+       サイコロをバウンド
+    ========================================== */
+
+
+    dice.classList.remove("roll");
+
+    dice.classList.add("bounce");
+
+
+    /*
+      ボタンを再び押せるようにする
+    */
+
+    button.disabled = false;
+
+
+  }, 1000);
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
